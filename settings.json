@@ -1,0 +1,9 @@
+{
+  "SettingsSignifier": "* ",
+  "ControlPanelSignifier": "& ",
+  "EitherSettingsTypeSignifier": "~ ",
+  "AllWindowsSettingsCommand": "AllWindowsSettings",
+  "AllControlPanelSettingsCommand": "AllControlPanelSettings",
+  "AllSettingsCommand": "AllSettings",
+  "FuzzySearchThreshold": 5
+}
