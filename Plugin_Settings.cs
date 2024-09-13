@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Quokka.ListItems;
 using Quokka.PluginArch;
 using System.IO;
+using WinCopies.Util;
 
 namespace Plugin_Settings {
 
@@ -35,10 +36,34 @@ namespace Plugin_Settings {
       List<ListItem> items = new();
       switch (type) {
         case settingsType.WindowsSettings:
+          for (int i = 0; i < allSettings.Count; i++) {
+            if (allSettings[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
+            || ( FuzzySearch.LD(allSettings[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
+              items.Add(new WindowsSettingsItem(i, allSettings[i][0], allSettings[i][1]));
+            }
+          }
           break;
         case settingsType.ControlPanelSettings:
+          for (int i = 0; i < allCplPages.Count; i++) {
+            if (allCplPages[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
+            || ( FuzzySearch.LD(allCplPages[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
+              items.Add(new ControlPanelPageItem(allCplPages[i][0], allCplPages[i][1], allCplPages[i][2]));
+            }
+          }
           break;
         default:
+          for (int i = 0; i < allSettings.Count; i++) {
+            if (allSettings[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
+            || ( FuzzySearch.LD(allSettings[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
+              items.Add(new WindowsSettingsItem(i, allSettings[i][0], allSettings[i][1]));
+            }
+          }
+          for (int i = 0; i < allCplPages.Count; i++) {
+            if (allCplPages[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
+            || ( FuzzySearch.LD(allCplPages[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
+              items.Add(new ControlPanelPageItem(allCplPages[i][0], allCplPages[i][1], allCplPages[i][2]));
+            }
+          }
           break;
       }
       return items;
@@ -105,9 +130,18 @@ namespace Plugin_Settings {
           return items;
         case var value when value == PluginSettings.AllControlPanelSettingsCommand:
           items = new List<ListItem>() { };
+          for (int i = 0; i < allCplPages.Count; i++) {
+            items.Add(new ControlPanelPageItem(allCplPages[i][0], allCplPages[i][1], allCplPages[i][2]));
+          }
           return items;
         default:
           items = new List<ListItem>() { };
+          for (int i = 0; i < allSettings.Count; i++) {
+            items.Add(new WindowsSettingsItem(i, allSettings[i][0], allSettings[i][1]));
+          }
+          for (int i = 0; i < allCplPages.Count; i++) {
+            items.Add(new ControlPanelPageItem(allCplPages[i][0], allCplPages[i][1], allCplPages[i][2]));
+          }
           return items;
       }
     }
