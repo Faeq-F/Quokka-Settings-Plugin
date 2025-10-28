@@ -33,37 +33,24 @@ namespace Plugin_Settings {
     }
 
     private List<ListItem> loadItems(string query, settingsType type) {
-      List<ListItem> items = new();
+      List<ListItem> items = new List<ListItem>();
       switch (type) {
         case settingsType.WindowsSettings:
-          for (int i = 0; i < allSettings.Count; i++) {
-            if (allSettings[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
-            || ( FuzzySearch.LD(allSettings[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
-              items.Add(new WindowsSettingsItem(i, allSettings[i][0], allSettings[i][1]));
-            }
-          }
+          items.AddRange(
+          FuzzySearch.searchAll(query, allSettings.Select(x => x[0]).ToList(), PluginSettings.FuzzySearchThreshold)
+          // After getting the top results, make them ListItems
+          .Select(x => (ListItem) new WindowsSettingsItem(x.Index, allSettings[x.Index][0], allSettings[x.Index][1])).Distinct().ToList());
           break;
         case settingsType.ControlPanelSettings:
-          for (int i = 0; i < allCplPages.Count; i++) {
-            if (allCplPages[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
-            || ( FuzzySearch.LD(allCplPages[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
-              items.Add(new ControlPanelPageItem(allCplPages[i][0], allCplPages[i][1], allCplPages[i][2]));
-            }
-          }
+          items.AddRange(
+          FuzzySearch.searchAll(query, allCplPages.Select(x => x[0]).ToList(), PluginSettings.FuzzySearchThreshold)
+          // After getting the top results, make them ListItems
+          .Select(x => (ListItem) new ControlPanelPageItem(allCplPages[x.Index][0], allCplPages[x.Index][1], allCplPages[x.Index][2])).Distinct().ToList());
           break;
         default:
-          for (int i = 0; i < allSettings.Count; i++) {
-            if (allSettings[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
-            || ( FuzzySearch.LD(allSettings[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
-              items.Add(new WindowsSettingsItem(i, allSettings[i][0], allSettings[i][1]));
-            }
-          }
-          for (int i = 0; i < allCplPages.Count; i++) {
-            if (allCplPages[i][0].Contains(query, StringComparison.OrdinalIgnoreCase)
-            || ( FuzzySearch.LD(allCplPages[i][0], query) < PluginSettings.FuzzySearchThreshold )) {
-              items.Add(new ControlPanelPageItem(allCplPages[i][0], allCplPages[i][1], allCplPages[i][2]));
-            }
-          }
+          items.AddRange(
+            loadItems(query, settingsType.WindowsSettings).Concat(
+            loadItems(query, settingsType.ControlPanelSettings)));
           break;
       }
       return items;
@@ -96,13 +83,13 @@ namespace Plugin_Settings {
     public override List<ListItem> OnSignifier(string command) {
       if (command.StartsWith(PluginSettings.SettingsSignifier)) {
         command = command.Substring(PluginSettings.SettingsSignifier.Length);
-        return loadItems(command, settingsType.WindowsSettings);
+        return FuzzySearch.sort(command, loadItems(command, settingsType.WindowsSettings)).ToList();
       } else if (command.StartsWith(PluginSettings.ControlPanelSignifier)) {
         command = command.Substring(PluginSettings.ControlPanelSignifier.Length);
-        return loadItems(command, settingsType.ControlPanelSettings);
+        return FuzzySearch.sort(command, loadItems(command, settingsType.ControlPanelSettings)).ToList();
       } else {
         command = command.Substring(PluginSettings.EitherSettingsTypeSignifier.Length);
-        return loadItems(command, settingsType.Either);
+        return FuzzySearch.sort(command, loadItems(command, settingsType.Either)).ToList();
       }
     }
 

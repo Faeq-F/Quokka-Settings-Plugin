@@ -5,5 +5,5 @@
   "AllWindowsSettingsCommand": "AllWindowsSettings",
   "AllControlPanelSettingsCommand": "AllControlPanelSettings",
   "AllSettingsCommand": "AllSettings",
-  "FuzzySearchThreshold": 4
+  "FuzzySearchThreshold": 70
 }
