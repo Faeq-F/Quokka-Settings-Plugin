@@ -1,5 +1,6 @@
 ﻿using Quokka;
 using Quokka.ListItems;
+using Quokka.PluginArch;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
 
@@ -243,8 +244,10 @@ namespace Plugin_Settings {
       string category = getCategory(index);
       Name = $"{category} | {page}";
       Description = $"Opens the '{page}' page in settings";
-      Icon = new BitmapImage(new Uri(
-          Environment.CurrentDirectory + "\\PlugBoard\\Plugin_Settings\\Plugin\\settings.png"));
+      UiDispatcher.BeginInvoke(() => {
+        Icon = new BitmapImage(new Uri(
+            Environment.CurrentDirectory + "\\PlugBoard\\Plugin_Settings\\Plugin\\settings.png"));
+      });
       this.uri = uri;
     }
 

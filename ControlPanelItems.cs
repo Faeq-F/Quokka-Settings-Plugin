@@ -1,5 +1,6 @@
 ﻿using Quokka;
 using Quokka.ListItems;
+using Quokka.PluginArch;
 using System.Windows.Media.Imaging;
 
 namespace Plugin_Settings {
@@ -66,11 +67,13 @@ namespace Plugin_Settings {
     string canonicalName;
 
     public ControlPanelPageItem(string Title, string canonicalName, string GUID) {
-      this.Name = Title;
-      this.Description = $"{canonicalName} | {GUID}";
+      Name = Title;
+      Description = $"{canonicalName} | {GUID}";
       this.canonicalName = canonicalName;
-      this.Icon = new BitmapImage(new Uri(
-          Environment.CurrentDirectory + "\\PlugBoard\\Plugin_Settings\\Plugin\\controlPanel.png"));
+      UiDispatcher.BeginInvoke(() => {
+        Icon = new BitmapImage(new Uri(
+            Environment.CurrentDirectory + "\\PlugBoard\\Plugin_Settings\\Plugin\\controlPanel.png"));
+      });
     }
 
     public override void Execute() {
