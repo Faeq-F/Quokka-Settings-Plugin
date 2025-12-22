@@ -1,11 +1,12 @@
 ﻿using Quokka;
 using Quokka.ListItems;
 using Quokka.PluginArch;
-using System.Windows.Media.Imaging;
 
-namespace Plugin_Settings {
+namespace PluginSettings
+{
 
-  public partial class Settings {
+  public partial class Settings
+  {
     internal static string cplPath = System.IO.Path.Combine(Environment.SystemDirectory, "control.exe");
     internal static List<List<string>> allCplPages = new() {
       new(){"Action Center", "Microsoft.ActionCenter", "{BB64F8A7-BEE7-4E1A-AB8D-7D8273F7FDB6}"},
@@ -62,21 +63,23 @@ namespace Plugin_Settings {
     };
   }
 
-  class ControlPanelPageItem : ListItem {
+  class ControlPanelPageItem : ListItem
+  {
 
-    string canonicalName;
+    readonly string canonicalName;
 
-    public ControlPanelPageItem(string Title, string canonicalName, string GUID) {
+    public ControlPanelPageItem(string Title, string canonicalName, string GUID)
+    {
       Name = Title;
       Description = $"{canonicalName} | {GUID}";
       this.canonicalName = canonicalName;
-      UiDispatcher.BeginInvoke(() => {
-        Icon = new BitmapImage(new Uri(
-            Environment.CurrentDirectory + "\\PlugBoard\\Plugin_Settings\\Plugin\\controlPanel.png"));
-      });
+      Icon = IconCache.GetOrAdd(
+        Environment.CurrentDirectory + "\\PlugBoard\\PluginSettings\\Plugin\\controlPanel.png"
+      );
     }
 
-    public override void Execute() {
+    public override void Execute()
+    {
       System.Diagnostics.Process.Start(Settings.cplPath, $"/name {canonicalName}");
       App.Current.MainWindow.Close();
     }

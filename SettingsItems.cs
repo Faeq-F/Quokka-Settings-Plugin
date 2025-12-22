@@ -2,11 +2,12 @@
 using Quokka.ListItems;
 using Quokka.PluginArch;
 using System.Diagnostics;
-using System.Windows.Media.Imaging;
 
-namespace Plugin_Settings {
+namespace PluginSettings
+{
 
-  public partial class Settings {
+  public partial class Settings
+  {
 
     internal static List<List<string>> allSettings = new() {
 
@@ -236,56 +237,88 @@ namespace Plugin_Settings {
 
 
 
-  class WindowsSettingsItem : ListItem {
+  class WindowsSettingsItem : ListItem
+  {
 
-    private string uri;
+    private readonly string uri;
 
-    public WindowsSettingsItem(int index, string page, string uri) {
-      string category = getCategory(index);
+    public WindowsSettingsItem(int index, string page, string uri)
+    {
+      string category = GetCategory(index);
       Name = $"{category} | {page}";
       Description = $"Opens the '{page}' page in settings";
-      UiDispatcher.BeginInvoke(() => {
-        Icon = new BitmapImage(new Uri(
-            Environment.CurrentDirectory + "\\PlugBoard\\Plugin_Settings\\Plugin\\settings.png"));
-      });
+      Icon = IconCache.GetOrAdd(
+        Environment.CurrentDirectory + "\\PlugBoard\\PluginSettings\\Plugin\\settings.png"
+      );
       this.uri = uri;
     }
 
-    public override void Execute() {
+    public override void Execute()
+    {
       Process.Start(uri);
       App.Current.MainWindow.Close();
     }
 
-    private static string getCategory(int index) {
-      if (index >= 0 && index <= 5) {
+    private static string GetCategory(int index)
+    {
+      if (index >= 0 && index <= 5)
+      {
         return "Accounts";
-      } else if (index >= 6 && index <= 12) {
+      }
+      else if (index >= 6 && index <= 12)
+      {
         return "Apps";
-      } else if (index >= 13 && index <= 22) {
+      }
+      else if (index >= 13 && index <= 22)
+      {
         return "Devices";
-      } else if (index >= 23 && index <= 36) {
+      }
+      else if (index >= 23 && index <= 36)
+      {
         return "Ease of Access";
-      } else if (index == 37) {
+      }
+      else if (index == 37)
+      {
         return "Family Group";
-      } else if (index >= 38 && index <= 40) {
+      }
+      else if (index >= 38 && index <= 40)
+      {
         return "Gaming";
-      } else if (index >= 41 && index <= 51) {
+      }
+      else if (index >= 41 && index <= 51)
+      {
         return "Network and Internet";
-      } else if (index >= 52 && index <= 62) {
+      }
+      else if (index >= 52 && index <= 62)
+      {
         return "Personalization";
-      } else if (index >= 63 && index <= 64) {
+      }
+      else if (index >= 63 && index <= 64)
+      {
         return "Phone";
-      } else if (index >= 65 && index <= 93) {
+      }
+      else if (index >= 65 && index <= 93)
+      {
         return "Privacy";
-      } else if (index >= 94 && index <= 95) {
+      }
+      else if (index >= 94 && index <= 95)
+      {
         return "Search";
-      } else if (index >= 96 && index <= 98) {
+      }
+      else if (index >= 96 && index <= 98)
+      {
         return "Sound";
-      } else if (index >= 99 && index <= 126) {
+      }
+      else if (index >= 99 && index <= 126)
+      {
         return "System";
-      } else if (index >= 127 && index <= 130) {
+      }
+      else if (index >= 127 && index <= 130)
+      {
         return "Time and Language";
-      } else {
+      }
+      else
+      {
         return "Update and Security";
       }
     }
