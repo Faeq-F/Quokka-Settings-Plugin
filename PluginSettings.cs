@@ -4,7 +4,6 @@ using Quokka.ListItems;
 using Quokka.PluginArch;
 using System.Collections.ObjectModel;
 using System.IO;
-using WinCopies.Util;
 
 namespace PluginSettings
 {
@@ -14,9 +13,7 @@ namespace PluginSettings
   /// </summary>
   public partial class Settings : Plugin
   {
-
-    private static PluginSettings pluginSettings = new();
-    internal static PluginSettings PluginSettings { get => pluginSettings; set => pluginSettings = value; }
+    internal static PluginSettings PluginSettings { get; set; } = new();
 
     /// <summary>
     /// Loads plugin settings
@@ -32,32 +29,35 @@ namespace PluginSettings
     /// </summary>
     public override string PluginName { get; set; } = "Settings";
 
-    enum SettingsType
+    private enum SettingsType
     {
       WindowsSettings, ControlPanelSettings, Either
     }
 
     private static Collection<ListItem> LoadItems(string query, SettingsType type)
     {
-      Collection<ListItem> items = new();
+      Collection<ListItem> items = [];
       switch (type)
       {
         case SettingsType.WindowsSettings:
-          items.AddRange(
-          FuzzySearch.SearchAll(query, new Collection<string>(allSettings.Select(x => x[0]).ToList()), PluginSettings.FuzzySearchThreshold)
-          // After getting the top results, make them ListItems
-          .Select(x => (ListItem)new WindowsSettingsItem(x.Index, allSettings[x.Index][0], allSettings[x.Index][1])).Distinct().ToList());
+          FuzzySearch.SearchAll(query, new Collection<string>(allSettings.ConvertAll(x => x[0])), PluginSettings.FuzzySearchThreshold)
+            .Select(x => (ListItem)new WindowsSettingsItem(x.Index, allSettings[x.Index][0], allSettings[x.Index][1]))
+            .Distinct()
+            .ToList()
+            .ForEach(items.Add);
           break;
         case SettingsType.ControlPanelSettings:
-          items.AddRange(
-          FuzzySearch.SearchAll(query, new Collection<string>(allCplPages.Select(x => x[0]).ToList()), PluginSettings.FuzzySearchThreshold)
-          // After getting the top results, make them ListItems
-          .Select(x => (ListItem)new ControlPanelPageItem(allCplPages[x.Index][0], allCplPages[x.Index][1], allCplPages[x.Index][2])).Distinct().ToList());
+          FuzzySearch.SearchAll(query, new Collection<string>(allCplPages.ConvertAll(x => x[0])), PluginSettings.FuzzySearchThreshold)
+            .Select(x => (ListItem)new ControlPanelPageItem(allCplPages[x.Index][0], allCplPages[x.Index][1], allCplPages[x.Index][2]))
+            .Distinct()
+            .ToList()
+            .ForEach(items.Add);
           break;
         default:
-          items.AddRange(
-            LoadItems(query, SettingsType.WindowsSettings).Concat(
-            LoadItems(query, SettingsType.ControlPanelSettings)));
+          LoadItems(query, SettingsType.WindowsSettings)
+            .Concat(LoadItems(query, SettingsType.ControlPanelSettings))
+            .ToList()
+            .ForEach(items.Add);
           break;
       }
       return items;
@@ -112,9 +112,9 @@ namespace PluginSettings
     /// <inheritdoc/>
     /// </summary>
     /// <returns>The commands in settings (AllWindowsSettingsCommand, AllControlPanelSettingsCommand, AllSettingsCommand)</returns>
-    public override Collection<String> SpecialCommands()
+    public override Collection<string> SpecialCommands()
     {
-      return new Collection<String>() { PluginSettings.AllWindowsSettingsCommand, PluginSettings.AllControlPanelSettingsCommand, PluginSettings.AllSettingsCommand };
+      return [PluginSettings.AllWindowsSettingsCommand, PluginSettings.AllControlPanelSettingsCommand, PluginSettings.AllSettingsCommand];
     }
 
     /// <summary>

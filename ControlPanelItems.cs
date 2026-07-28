@@ -1,10 +1,12 @@
-﻿using Quokka;
 using Quokka.ListItems;
 using Quokka.PluginArch;
+using System.Diagnostics;
+using System.Windows;
 
 namespace PluginSettings
 {
 
+#pragma warning disable CA1724 // Type name conflicts with namespace name
   public partial class Settings
   {
     internal static string cplPath = System.IO.Path.Combine(Environment.SystemDirectory, "control.exe");
@@ -63,10 +65,10 @@ namespace PluginSettings
     };
   }
 
-  class ControlPanelPageItem : ListItem
+  internal sealed class ControlPanelPageItem : ListItem
   {
 
-    readonly string canonicalName;
+    private readonly string canonicalName;
 
     public ControlPanelPageItem(string Title, string canonicalName, string GUID)
     {
@@ -80,8 +82,8 @@ namespace PluginSettings
 
     public override void Execute()
     {
-      System.Diagnostics.Process.Start(Settings.cplPath, $"/name {canonicalName}");
-      App.Current.MainWindow.Close();
+      Process.Start(Settings.cplPath, $"/name {canonicalName}");
+      Application.Current.MainWindow.Close();
     }
   }
 }

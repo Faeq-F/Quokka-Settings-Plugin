@@ -1,7 +1,7 @@
-﻿using Quokka;
 using Quokka.ListItems;
 using Quokka.PluginArch;
 using System.Diagnostics;
+using System.Windows;
 
 namespace PluginSettings
 {
@@ -237,7 +237,7 @@ namespace PluginSettings
 
 
 
-  class WindowsSettingsItem : ListItem
+  internal sealed class WindowsSettingsItem : ListItem
   {
 
     private readonly string uri;
@@ -256,72 +256,27 @@ namespace PluginSettings
     public override void Execute()
     {
       Process.Start(uri);
-      App.Current.MainWindow.Close();
+      Application.Current.MainWindow.Close();
     }
 
-    private static string GetCategory(int index)
+    private static string GetCategory(int index) => index switch
     {
-      if (index >= 0 && index <= 5)
-      {
-        return "Accounts";
-      }
-      else if (index >= 6 && index <= 12)
-      {
-        return "Apps";
-      }
-      else if (index >= 13 && index <= 22)
-      {
-        return "Devices";
-      }
-      else if (index >= 23 && index <= 36)
-      {
-        return "Ease of Access";
-      }
-      else if (index == 37)
-      {
-        return "Family Group";
-      }
-      else if (index >= 38 && index <= 40)
-      {
-        return "Gaming";
-      }
-      else if (index >= 41 && index <= 51)
-      {
-        return "Network and Internet";
-      }
-      else if (index >= 52 && index <= 62)
-      {
-        return "Personalization";
-      }
-      else if (index >= 63 && index <= 64)
-      {
-        return "Phone";
-      }
-      else if (index >= 65 && index <= 93)
-      {
-        return "Privacy";
-      }
-      else if (index >= 94 && index <= 95)
-      {
-        return "Search";
-      }
-      else if (index >= 96 && index <= 98)
-      {
-        return "Sound";
-      }
-      else if (index >= 99 && index <= 126)
-      {
-        return "System";
-      }
-      else if (index >= 127 && index <= 130)
-      {
-        return "Time and Language";
-      }
-      else
-      {
-        return "Update and Security";
-      }
-    }
+      >= 0 and <= 5 => "Accounts",
+      >= 6 and <= 12 => "Apps",
+      >= 13 and <= 22 => "Devices",
+      >= 23 and <= 36 => "Ease of Access",
+      37 => "Family Group",
+      >= 38 and <= 40 => "Gaming",
+      >= 41 and <= 51 => "Network and Internet",
+      >= 52 and <= 62 => "Personalization",
+      >= 63 and <= 64 => "Phone",
+      >= 65 and <= 93 => "Privacy",
+      >= 94 and <= 95 => "Search",
+      >= 96 and <= 98 => "Sound",
+      >= 99 and <= 126 => "System",
+      >= 127 and <= 130 => "Time and Language",
+      _ => "Update and Security"
+    };
   }
 
 }
